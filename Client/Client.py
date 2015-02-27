@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import socket
+import MessageReceiver
 
 class Client:
     """
     This is the chat client class
     """
+    loggedIn = 0
 
     def __init__(self, host, server_port):
         """
@@ -14,8 +16,16 @@ class Client:
         # Set up the socket connection to the server
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.run()
+        
+        messageReceiver = MessageReceiver(self,self.connection)
 
-        # TODO: Finish init process with necessary code
+        login()
+
+
+    def login():
+        username = raw_input("Skriv brukernavn: ")
+        dictonary = {'request':'login','content':username}
+        send_payload(dictonary)
 
     def run(self):
         # Initiate the connection to the server
@@ -27,10 +37,22 @@ class Client:
 
     def receive_message(self, message):
         # TODO: Handle incoming message
-        pass
-
+        sender = message['sender']
+        timestamp = message['timestamp']
+        response = message['response']
+        content = message['content']
+        if(response != 'message'):
+            print timestamp +"\n" +response +": " +content
+        else:
+            print timestamp +"\n" +sender + ": " +content
+            
+        
     def send_payload(self, data):
         # TODO: Handle sending of a payload
+        if (! loggedIn and ! data['request']= 'login'):
+            print 'Are you retarded? Log in before you can have fun'
+            return   
+        self.connection.send(json.dumps(data))
         pass
 
 
