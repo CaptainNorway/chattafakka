@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 import socket
 import MessageReceiver
+import json
+import os
+import platform
 
 class Client:
     """
     This is the chat client class
     """
-    loggedIn = 0
+    loggedIn = False
 
     def __init__(self, host, server_port):
         """
@@ -15,24 +18,45 @@ class Client:
 
         # Set up the socket connection to the server
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.host = host
+        self.server_port = server_port
         self.run()
-        
-        login()
+        self.messageReceiver = MessageReceiver.MessageReceiver(self,self.connection)
+        self.messageReceiver.start()
+        while True:
+            if self.loggedIn:
+                request = raw_input("Send request: ")
+                if request == 'help':
+                    self.help()
+                elif request == 'names':
+                    self.names()
+                elif request == 'logout':
+                    self.disconnect()
+                else:
+                    request = request.split(" ", 1)
+                    dictonary = {'request':request[0], 'content':request[1]}
+                    self.send_payload(dictonary)
+            else:
+                self.login()
 
-        messageReceiver = MessageReceiver(self,self.connection)
-
-    def login():
+    def login(self):
         username = raw_input("Skriv brukernavn: ")
         dictonary = {'request':'login','content':username}
-        send_payload(dictonary)
+        self.send_payload(dictonary)
+        self.loggedIn = True
 
     def run(self):
         # Initiate the connection to the server
         self.connection.connect((self.host, self.server_port))
 
     def disconnect(self):
-        # TODO: Handle disconnection
-        pass
+        if platform.system() == "Windows":
+            os.system('cls')
+        else:
+            os.system('clear')
+        self.loggedIn = False
+        self.messageReceiver.cancel()
+        print "Logged out..."
 
     def receive_message(self, message):
         # TODO: Handle incoming message #error, info, history, message
@@ -61,7 +85,15 @@ class Client:
             #print 'Are you retarded? Log in before you can have fun'
         #    return   
         self.connection.send(json.dumps(data))
+
+    def help(self):
+        print "\t logout - log out"
+        print "\t msg <message> - send message"
+        print "\t names - list users in chat"
+        print "\t help - view help text"
         
+    def names(self):
+        print "chills"
 
 
 if __name__ == '__main__':
