@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import SocketServer
-
+import Handler
 
 class ClientHandler(SocketServer.BaseRequestHandler):
     """
@@ -21,8 +21,23 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         # Loop that listens for messages from the client
         while True:
             received_string = self.connection.recv(4096)
-            
+            time.sleep(1000)
+            request = received_string['request']
+            content = received_string['content']
             # TODO: Add handling of received payload from client
+            if request == 'login':
+                Handler.login(self,content)
+            elif request == 'logout':
+                Handler.logout(self,content)
+            elif request == 'msg':
+                Handler.recieve_message(self,content)
+            elif request == 'names':
+                Handler.list_names(self)
+            elif request == 'help':
+                Handler.send_help(self)
+            else:
+                Handler.send_error(self)
+
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
@@ -42,8 +57,9 @@ if __name__ == "__main__":
     No alterations is necessary
     """
     HOST, PORT = 'localhost', 9998
+    
     print 'Server running...'
-
     # Set up and initiate the TCP server
     server = ThreadedTCPServer((HOST, PORT), ClientHandler)
     server.serve_forever()
+    
