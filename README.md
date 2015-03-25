@@ -1,5 +1,5 @@
 # Chattafakka
-##Project in TTM4100 Kommunikasjon - Tjenester og nett 
+##Project in TTM4100 - KTN
 ###Client
 Run in command line with ```python Client.py  ```  
 Commands:
