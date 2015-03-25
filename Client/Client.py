@@ -25,16 +25,16 @@ class Client:
         self.messageReceiver.start()
         while True:
             if self.loggedIn:
-                request = raw_input("Send request: ")
-                if request == 'help':
-                    self.help()
-                elif request == 'names':
-                    self.names()
-                elif request == 'logout':
+                #request = raw_input("Send request: ")
+                request = raw_input('')
+                if request == 'logout':
                     self.disconnect()
                 else:
-                    request = request.split(" ", 1)
-                    dictonary = {'request':request[0], 'content':request[1]}
+                    if ' ' in request:
+                        request = request.split(' ', 1)
+                        dictonary = {'request':request[0], 'content':request[1]}
+                    else:
+                        dictonary = {'request':request, 'content':None}
                     self.send_payload(dictonary)
             else:
                 self.login()
@@ -55,28 +55,32 @@ class Client:
         else:
             os.system('clear')
         self.loggedIn = False
+        dictonary = {'request':'logout','content':None}
+        self.send_payload(dictonary)
         self.messageReceiver.cancel()
         print "Logged out..."
 
     def receive_message(self, message):
         # TODO: Handle incoming message #error, info, history, message
-        sender = message['sender']
-        timestamp = message['timestamp']
-        response = message['response']
-        content = message['content']
+        sender = message["sender"]
+        timestamp = message["timestamp"]
+        response = message["response"]
+        content = message["content"]
         if response == 'message':
             # Print standard message
-            print timestamp +"\n" +response +": " +content
+            print timestamp + " " + sender +": " +content
         elif response == 'error':
             # Print error message
-            print "Error: " +timestamp +"\n" +sender + ": " +content
+            print timestamp + " ERROR - " +content
         elif response == 'history':
             # Content is all messages previously recieved by the server
             for history_message in content:
-                print timestamp +"\n"+ history_message['content']
+                print "\t" + history_message['timestamp'] + " " + history_message['sender'] +": " + history_message['content']
         elif response == 'info':
             # Print info message
-            print "Info:"+timestamp+'\n' + content
+            print content
+        else:
+            print "Repsonse not recognized."
 
         
     def send_payload(self, data):
@@ -85,16 +89,6 @@ class Client:
             #print 'Are you retarded? Log in before you can have fun'
         #    return   
         self.connection.send(json.dumps(data))
-
-    def help(self):
-        print "\t logout - log out"
-        print "\t msg <message> - send message"
-        print "\t names - list users in chat"
-        print "\t help - view help text"
-        
-    def names(self):
-        print "chills"
-
 
 if __name__ == '__main__':
     """

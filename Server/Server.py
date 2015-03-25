@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import SocketServer
 import Handler
+import time
+import json
 
 class ClientHandler(SocketServer.BaseRequestHandler):
     """
@@ -17,26 +19,34 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         self.ip = self.client_address[0]
         self.port = self.client_address[1]
         self.connection = self.request
+        print "Client connected.."
 
         # Loop that listens for messages from the client
         while True:
             received_string = self.connection.recv(4096)
-            time.sleep(1000)
-            request = received_string['request']
-            content = received_string['content']
+            received_json = json.loads(received_string)
+            request = received_json["request"]
+            content = received_json["content"]
+            if (content == None):
+                print "New request: " + request
+            else:    
+                print "New request: " + request + " " + content
             # TODO: Add handling of received payload from client
             if request == 'login':
+                self.username = content
                 Handler.login(self,content)
             elif request == 'logout':
-                Handler.logout(self,content)
+                Handler.logout(self)
             elif request == 'msg':
-                Handler.recieve_message(self,content)
+                Handler.recieve_message(content, self.username)
             elif request == 'names':
-                Handler.list_names(self)
+                Handler.list_users(self)
             elif request == 'help':
                 Handler.send_help(self)
+            elif request == 'history':
+                Handler.send_history(self)
             else:
-                Handler.send_error(self)
+                Handler.send_error(self, request)
 
 
 
