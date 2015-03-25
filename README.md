@@ -1,5 +1,5 @@
 # Chattafakka
-##Procjet in TTM4100 Kommunikasjon - Tjenester og nett 
+##Project in TTM4100 Kommunikasjon - Tjenester og nett 
 ###Client
 Run in command line with python Client.py
 login <username> - log in with the given username
