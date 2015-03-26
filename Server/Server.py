@@ -32,7 +32,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             content = received_json["content"]
             if (content == None):
                 print "New request: " + request
-            else:    
+            else:
                 print "New request: " + request + " " + content
             # TODO: Add handling of received payload from client
 
