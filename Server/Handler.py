@@ -44,9 +44,14 @@ def send_error(client, request):
 	data = JSON_ify(error_message,'server','error')
 	client.connection.send(json.dumps(data))
 
+def send_login_error(client, error_message):
+	data = JSON_ify(error_message,'server','error')
+	client.connection.send(json.dumps(data))
+
 def send_history(client):
 	data = JSON_ify(message_history,'server','history')
 	client.connection.send(json.dumps(data))
+
 def JSON_ify(content, sender, response):
 	data = {
 		'timestamp': str(datetime.datetime.now().strftime('%H.%M.%S')),

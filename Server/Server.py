@@ -3,6 +3,7 @@ import SocketServer
 import Handler
 import time
 import json
+import re
 
 class ClientHandler(SocketServer.BaseRequestHandler):
     """
@@ -11,6 +12,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
     only connected clients, and not the server itself. If you want to write
     logic for the server, you must write it outside this class
     """
+
+    loggedIn = False
 
     def handle(self):
         """
@@ -32,17 +35,28 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             else:    
                 print "New request: " + request + " " + content
             # TODO: Add handling of received payload from client
+
             if request == 'login':
                 self.username = content
-                Handler.login(self,content)
+                pattern = re.compile("^[a-zA-Z0-9]*$")
+                if self.loggedIn == True:
+                    Handler.send_login_error(self, "Already logged in.")
+                elif pattern.match(self.username):
+                    Handler.login(self,content)
+                    self.loggedIn = True
+                else:
+                    Handler.send_login_error(self, "Invalid username. Letters and numbers only.")
+            elif request == 'help':
+                Handler.send_help(self)
+            elif self.loggedIn == False:
+                Handler.send_login_error(self, "You must log in before you can do anything else.")
             elif request == 'logout':
+                self.loggedIn = False
                 Handler.logout(self)
             elif request == 'msg':
                 Handler.recieve_message(content, self.username)
             elif request == 'names':
                 Handler.list_users(self)
-            elif request == 'help':
-                Handler.send_help(self)
             elif request == 'history':
                 Handler.send_history(self)
             else:

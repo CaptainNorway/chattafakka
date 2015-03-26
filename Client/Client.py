@@ -9,7 +9,6 @@ class Client:
     """
     This is the chat client class
     """
-    loggedIn = False
 
     def __init__(self, host, server_port):
         """
@@ -23,27 +22,23 @@ class Client:
         self.run()
         self.messageReceiver = MessageReceiver.MessageReceiver(self,self.connection)
         self.messageReceiver.start()
+        print "login <username> - log in with username"
+        print "logout - log out"
+        print "msg <message> - send message"
+        print "names - list users in chat"
+        print "help - view help text"
+        print "history - view log of all sent messages"
         while True:
-            if self.loggedIn:
-                #request = raw_input("Send request: ")
-                request = raw_input('')
-                if request == 'logout':
-                    self.disconnect()
-                else:
-                    if ' ' in request:
-                        request = request.split(' ', 1)
-                        dictonary = {'request':request[0], 'content':request[1]}
-                    else:
-                        dictonary = {'request':request, 'content':None}
-                    self.send_payload(dictonary)
+            request = raw_input('')
+            if request == 'logout':
+               self.disconnect()
             else:
-                self.login()
-
-    def login(self):
-        username = raw_input("Skriv brukernavn: ")
-        dictonary = {'request':'login','content':username}
-        self.send_payload(dictonary)
-        self.loggedIn = True
+                if ' ' in request:
+                    request = request.split(' ', 1)
+                    dictonary = {'request':request[0], 'content':request[1]}
+                else:
+                   dictonary = {'request':request, 'content':None}
+                self.send_payload(dictonary)
 
     def run(self):
         # Initiate the connection to the server

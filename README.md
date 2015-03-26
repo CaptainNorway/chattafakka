@@ -4,6 +4,7 @@
 Run in command line with ```python Client.py  ```  
 Commands:
 ```
+login <username> - log in with username
 logout - log out  
 msg <message> - send message  
 names - list users in chat  
