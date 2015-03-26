@@ -43,7 +43,6 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                     Handler.send_login_error(self, "Already logged in.")
                 elif pattern.match(self.username):
                     Handler.login(self,content)
-                    self.loggedIn = True
                 else:
                     Handler.send_login_error(self, "Invalid username. Letters and numbers only.")
             elif request == 'help':

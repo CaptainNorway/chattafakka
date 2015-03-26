@@ -22,12 +22,7 @@ class Client:
         self.run()
         self.messageReceiver = MessageReceiver.MessageReceiver(self,self.connection)
         self.messageReceiver.start()
-        print "login <username> - log in with username"
-        print "logout - log out"
-        print "msg <message> - send message"
-        print "names - list users in chat"
-        print "help - view help text"
-        print "history - view log of all sent messages"
+        self.print_help()
         while True:
             request = raw_input('')
             if request == 'logout':
@@ -44,6 +39,14 @@ class Client:
         # Initiate the connection to the server
         self.connection.connect((self.host, self.server_port))
 
+    def print_help(self):
+        print "login <username> - log in with username"
+        print "logout - log out"
+        print "msg <message> - send message"
+        print "names - list users in chat"
+        print "help - view help text"
+        print "history - view log of all sent messages"
+
     def disconnect(self):
         if platform.system() == "Windows":
             os.system('cls')
@@ -53,7 +56,7 @@ class Client:
         dictonary = {'request':'logout','content':None}
         self.send_payload(dictonary)
         self.messageReceiver.cancel()
-        print "Logged out..."
+        self.print_help()
 
     def receive_message(self, message):
         # TODO: Handle incoming message #error, info, history, message

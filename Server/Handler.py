@@ -8,10 +8,18 @@ message_history = []
 
 
 # Login
-def login(client,content):
-	username = content
-	client_usernames.append((client,username))
-	send_history(client)
+def login(client,username):
+	usernameInUse = False
+	for client_username in client_usernames:
+		if client_username[1] == username:
+			usernameInUse = True
+	if usernameInUse:
+		client.loggedIn = False
+		send_login_error(client, "Username already in use.")
+	else:		
+		client_usernames.append((client,username))
+		client.loggedIn = True
+		send_history(client)
 
 def logout(client):
 	username = None
