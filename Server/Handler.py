@@ -44,7 +44,7 @@ def list_users(client):
 	client.connection.send(json.dumps(data))
 
 def send_help(client):
-	help_message = "\t logout - log out \n\t msg <message> - send message \n\t names - list users in chat \n\t help - view help text"
+	help_message = "\t login <username> - log in with username \n\t logout - log out \n\t msg <message> - send message \n\t names - list users in chat \n\t help - view help text"
 	data = JSON_ify(help_message,'server','info')
 	client.connection.send(json.dumps(data))
 
