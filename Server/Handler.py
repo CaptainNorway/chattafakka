@@ -11,6 +11,7 @@ message_history = []
 def login(client,content):
 	username = content
 	client_usernames.append((client,username))
+	send_history(client)
 
 def logout(client):
 	username = None
